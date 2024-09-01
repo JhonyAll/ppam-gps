@@ -11,6 +11,7 @@ import Parse from "parse/react-native";
 
 export default function ListRoutesScreen({ navigation }) {
   const [routes, setRoutes] = useState([]);
+  const [m, setM] = useState(0);
 
   useEffect(() => {
     const fetchRoutes = async () => {
@@ -21,6 +22,15 @@ export default function ListRoutesScreen({ navigation }) {
     };
     fetchRoutes();
   }, []);
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      const Route = Parse.Object.extend("Route");
+      const query = new Parse.Query(Route);
+      const results = await query.find();
+      setRoutes(results);
+    };
+    fetchRoutes();
+  }, [m]);
 
   return (
     <View style={styles.container}>
@@ -35,13 +45,22 @@ export default function ListRoutesScreen({ navigation }) {
                 {item.get("date").toLocaleDateString()}
               </Text>
               <Text style={styles.distance}>
-                Distância percorrida: {item.get("distancia")} km
+                Distância percorrida: {item.get("distancia")} metros
               </Text>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => navigation.navigate("Rota", { route: item })}
               >
                 <Text style={styles.buttonText}>Ver Rota</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonB}
+                onPress={async () => {
+                  item.destroy();
+                  setM(m + 1);
+                }}
+              >
+                <Text style={styles.buttonText}>Excluir Rota</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -82,6 +101,13 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#8a4af3",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonB: {
+    backgroundColor: "#ff0000",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 5,

@@ -27,7 +27,6 @@ export default function HomeScreen({ navigation }) {
       const subscription = Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Highest,
-          timeInterval: 1000,
           distanceInterval: 1,
         },
         (loc) => {
@@ -54,6 +53,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const stopRecording = async () => {
+    setDistance(0);
     setIsRecording(false);
     const Route = Parse.Object.extend("Route");
     const route = new Route();
